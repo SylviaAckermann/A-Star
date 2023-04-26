@@ -1,0 +1,8 @@
+world diagonal.wld
+
+settings VIS TRACE
+
+marker  100  100    0 255 0
+marker 700 500  255   0 0
+
+S4 100 100 0 aStar.x

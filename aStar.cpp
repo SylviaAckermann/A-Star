@@ -10,8 +10,8 @@ using std::vector;
 #include "eyebot++.h"
 
 #define WORLD_SIZE 1000
-#define STARTPOS_X = 100
-#define STARTPOS_Y = 100
+#define STARTPOS_X 100
+#define STARTPOS_Y 100
 
 #define SPEED 300
 
@@ -40,9 +40,9 @@ public:
 class Edge
 {
 public:
-    array<int, 2> neighbors;
+    std::array<int, 2> neighbors;
     int distance;
-    Edge(array<int, 2> neighbors_e, int distance_e)
+    Edge(std::array<int, 2> neighbors_e, int distance_e)
     {
         neighbors = neighbors_e;
         distance = distance_e;
@@ -67,7 +67,7 @@ void readWaypoints(vector<Node> nodes)
     fclose(file);
 }
 
-void driveToPoints(vector<Path> paths)
+void driveToPoints(vector<Node> paths)
 {
     // To-Do
 }
@@ -76,6 +76,8 @@ int main()
 {
     LCDMenu("Start", "A*", "Drive", "Exit");
     VWSetPosition(STARTPOS_X, STARTPOS_Y, 0); // eventually change x and y
+    int endSim = 0;
+    vector<Node> nodes;
 
     do
     {
@@ -83,7 +85,7 @@ int main()
         {
         case KEY1:
             printf("Reading Nodes ...\n");
-            vector<Node> nodes;
+            
             readWaypoints(nodes);
             break;
         case KEY2:

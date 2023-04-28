@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from eye import *
 import math
+import heapdict
 
 
 # global variables
@@ -67,6 +68,7 @@ def printAdjacencyMatrix():
         for distance in distances:
             output += '%.2f\t' % distance
         print(output)
+    return
 
 
 def heuristic(node: Node):
@@ -111,12 +113,12 @@ def readFile():
             id += 1
 
 
-def getPathAstar():
+def getPathAStar():
 
     startNode = nodes[0]
     endNode = nodes[len(nodes)-1]
 
-    openSet = []
+    openSet = heapdict.heapdict()
     closedSet = []
     parent = {}
 
@@ -124,9 +126,14 @@ def getPathAstar():
     fScores = {}
 
     # TODO: initialise fScores, gScores and openSet
+    
+    gScores.update({startNode.id: 0})
+    fScores.update({startNode.id: (heuristic(startNode)+gScores.get(startNode.id))})
+    openSet[startNode.id] = fScores.get(startNode.id)
+    print("nodeID = " + str(startNode.id) +" fscore =" + str(fScores[startNode.id])+", gscore = "+str(gScores[startNode.id])+"\n")
 
     while len(openSet) != 0:
-        current = None  # TODO get node in openset with lowest f score
+        current = nodes[int(openSet.peekitem()[0])]  # TODO get node in openset with lowest f score
 
         if current.id == endNode.id:  # at the goal
             # Retrieve path from parents and return
@@ -139,6 +146,7 @@ def getPathAstar():
                 # TODO add to the path
                 # TODO Update total distance
                 # TODO Update the current and previous node
+
                 pass
 
             path.append(currentNode)  # The last node
@@ -148,7 +156,7 @@ def getPathAstar():
             print("shortest path: ", [node.id for node in path])
             return path
 
-        openSet.remove(current)
+        openSet[current.id]
         closedSet.append(current)
 
         for edge in current.neighbours:
@@ -157,7 +165,7 @@ def getPathAstar():
             if neighbour in closedSet:
                 continue
 
-            tentativeGScore = 0  # TODO calculate from gScore and edge distance
+            tentativeGScore = heuristic(neighbour)  # TODO calculate from gScore and edge distance
 
             # tentative path is better than recorded path
             if tentativeGScore < gScores[neighbour]:
@@ -169,6 +177,9 @@ def getPathAstar():
 
     print("No path found")
     return []
+
+
+
 
 # ************************** MAIN ******************************************
 
@@ -184,12 +195,16 @@ if __name__ == "__main__":
         key = KEYRead()
         if (key == KEY1):
             LCDPrintf("Load File\n")
+            print("\n\n Loading File \n\n")
             readFile()
             printAdjacencyMatrix()
             break
         if (key == KEY2):
             LCDPrintf("Find Shortest Path\n")
-            # path getPathAStar()
+            print("\n\n Find Shortest Path \n\n")
+            readFile()
+            printAdjacencyMatrix()
+            getPathAStar()
             break
         if (key == KEY3):
             LCDPrintf("DRIVE\n")

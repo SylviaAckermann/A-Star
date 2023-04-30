@@ -1,3 +1,5 @@
 *.x
 *.pdf
 .vscode
+diagonal.wld
+libeyesim.dylib

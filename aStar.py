@@ -117,20 +117,20 @@ def getPathAStar():
     inf = 99999999
     startNode = nodes[0]
     endNode = nodes[len(nodes)-1]
-    openSet = PriorityQueue()
+    openSet = PriorityQueue() # ive seen examples of people using a priority queue
     closedSet = []
     parent = {}
     gScores = {}
     fScores = {}
 
-    # TODO: initialise fScores, gScores and openSet
+    # initialise fScores, gScores and openSet 
+    # This too my knowledge is correct
     gScores.update({startNode.id: 0})
     fScores.update({startNode.id: heuristic(startNode)})
     for i in range(len(nodes) - 2):
         gScores.update({nodes[i+1].id: inf})
         fScores.update({nodes[i+1].id: inf})
     openSet.put((fScores[startNode.id], fScores[startNode.id], startNode.id))
-    print("nodeID = " + str(startNode.id) +" fscore =" + str(fScores[startNode.id])+", gscore = "+str(gScores[startNode.id])+"\n")
 
 
     while not openSet.empty():

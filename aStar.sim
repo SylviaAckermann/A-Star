@@ -1,8 +1,11 @@
-world diagonal.wld
+# Sim file created 05/01/2023 12:31 PM
 
-settings VIS TRACE
+# World File 
+world "aStar_world.wld"
 
-marker  100  100    0 255 0
-marker 700 500  255   0 0
 
-S4 100 100 0 aStar.x
+# Robots
+S4 500 500 0
+
+# Objects
+# Markers

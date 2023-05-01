@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from eye import *
 import math
-import heapdict
+from queue import PriorityQueue
 
 
 # global variables
@@ -114,26 +114,27 @@ def readFile():
 
 
 def getPathAStar():
-
+    inf = 99999999
     startNode = nodes[0]
     endNode = nodes[len(nodes)-1]
-
-    openSet = heapdict.heapdict()
+    openSet = PriorityQueue()
     closedSet = []
     parent = {}
-
     gScores = {}
     fScores = {}
 
     # TODO: initialise fScores, gScores and openSet
-    
     gScores.update({startNode.id: 0})
-    fScores.update({startNode.id: (heuristic(startNode)+gScores.get(startNode.id))})
-    openSet[startNode.id] = fScores.get(startNode.id)
+    fScores.update({startNode.id: heuristic(startNode)})
+    for i in range(len(nodes) - 2):
+        gScores.update({nodes[i+1].id: inf})
+        fScores.update({nodes[i+1].id: inf})
+    openSet.put((fScores[startNode.id], fScores[startNode.id], startNode.id))
     print("nodeID = " + str(startNode.id) +" fscore =" + str(fScores[startNode.id])+", gscore = "+str(gScores[startNode.id])+"\n")
 
-    while len(openSet) != 0:
-        current = nodes[int(openSet.peekitem()[0])]  # TODO get node in openset with lowest f score
+
+    while not openSet.empty():
+        current = nodes[openSet.get()[2]]  # TODO get node in openset with lowest f score
 
         if current.id == endNode.id:  # at the goal
             # Retrieve path from parents and return
@@ -146,8 +147,12 @@ def getPathAStar():
                 # TODO add to the path
                 # TODO Update total distance
                 # TODO Update the current and previous node
+                path.append(currentNode)
+                totalDistance += gScores[currentNode.id]
+                previousNode = currentNode
+                currentNode = parent[currentNode.id]
 
-                pass
+                
 
             path.append(currentNode)  # The last node
             path.reverse()  # Put it in the right order
@@ -156,7 +161,7 @@ def getPathAStar():
             print("shortest path: ", [node.id for node in path])
             return path
 
-        openSet[current.id]
+        openSet.put(fScores[current.id], gScores[current.id], current.id)
         closedSet.append(current)
 
         for edge in current.neighbours:
@@ -168,13 +173,15 @@ def getPathAStar():
             tentativeGScore = heuristic(neighbour)  # TODO calculate from gScore and edge distance
 
             # tentative path is better than recorded path
-            if tentativeGScore < gScores[neighbour]:
+            if tentativeGScore < gScores[current.id]:
                 # TODO record parent
                 # TODO record gScore and fScore using heuristic
+                parent.update({current.id: neighbour.id})
+                gScores.update({current.id: tentativeGScore})
+                fScores.update({current.id: fScores[current.id]+gScores[current.id]})
 
-                if neighbour not in openSet:
-                    openSet.append(neighbour)
-
+                if neighbour not in openSet.queue:
+                    openSet.queue.append(neighbour.id)
     print("No path found")
     return []
 

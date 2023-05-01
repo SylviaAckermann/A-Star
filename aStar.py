@@ -114,27 +114,40 @@ def readFile():
 
 
 def getPathAStar():
+    print("calculate A*")
     inf = 99999999
     startNode = nodes[0]
     endNode = nodes[len(nodes)-1]
-    openSet = PriorityQueue() # ive seen examples of people using a priority queue
+    openSet = []  # ive seen examples of people using a priority queue
     closedSet = []
     parent = {}
     gScores = {}
     fScores = {}
 
-    # initialise fScores, gScores and openSet 
+    # initialise fScores, gScores and openSet
     # This too my knowledge is correct
-    gScores.update({startNode.id: 0})
-    fScores.update({startNode.id: heuristic(startNode)})
-    for i in range(len(nodes) - 2):
-        gScores.update({nodes[i+1].id: inf})
-        fScores.update({nodes[i+1].id: inf})
-    openSet.put((fScores[startNode.id], fScores[startNode.id], startNode.id))
+    # gScores.update({startNode.id: 0})
+    # fScores.update({startNode.id: heuristic(startNode)})
+    # openSet.update(nodes[1, len(nodes)-1])
+
+    currentNode = startNode
+    for n in currentNode.neighbours:
+        print("Neighbor ", n.neighbour.id)
+        print("Distance ", n.distance)
+        openSet.append(n.neighbour.id)
+        gScores.append(n.neighbour.id, n.distance)
+        fScores.append(n.neighbour.id, n.distance+heuristic(n.neighbor))
+
+    # for i in range(len(nodes) - 2):
+    #    gScores.update({nodes[i+1].id: inf})
+    #    fScores.update({nodes[i+1].id: inf})
+    # openSet.put((fScores[startNode.id], fScores[startNode.id], startNode.id))
 
 
+'''
     while not openSet.empty():
-        current = nodes[openSet.get()[2]]  # TODO get node in openset with lowest f score
+        # TODO get node in openset with lowest f score
+        current = nodes[openSet.get()[2]]
 
         if current.id == endNode.id:  # at the goal
             # Retrieve path from parents and return
@@ -152,8 +165,6 @@ def getPathAStar():
                 previousNode = currentNode
                 currentNode = parent[currentNode.id]
 
-                
-
             path.append(currentNode)  # The last node
             path.reverse()  # Put it in the right order
 
@@ -170,7 +181,8 @@ def getPathAStar():
             if neighbour in closedSet:
                 continue
 
-            tentativeGScore = heuristic(neighbour)  # TODO calculate from gScore and edge distance
+            # TODO calculate from gScore and edge distance
+            tentativeGScore = heuristic(neighbour)
 
             # tentative path is better than recorded path
             if tentativeGScore < gScores[current.id]:
@@ -178,52 +190,42 @@ def getPathAStar():
                 # TODO record gScore and fScore using heuristic
                 parent.update({current.id: neighbour.id})
                 gScores.update({current.id: tentativeGScore})
-                fScores.update({current.id: fScores[current.id]+gScores[current.id]})
+                fScores.update(
+                    {current.id: fScores[current.id]+gScores[current.id]})
 
                 if neighbour not in openSet.queue:
                     openSet.queue.append(neighbour.id)
-    print("No path found")
-    return []
 
 
-
+print("No path found")
+return []
+'''
 
 # ************************** MAIN ******************************************
-
-
 if __name__ == "__main__":
     # SIMSetRobot(0, 300, 300, 100, -90)
     VWSetPosition(100, 100, 90)
 
     LCDMenu("Start", "A*", "Drive", "End")
-    endSim = False
 
-    while endSim == False:
-        key = KEYRead()
-        if (key == KEY1):
-            LCDPrintf("Load File\n")
-            print("\n\n Loading File \n\n")
-            readFile()
-            printAdjacencyMatrix()
-            break
-        if (key == KEY2):
-            LCDPrintf("Find Shortest Path\n")
-            print("\n\n Find Shortest Path \n\n")
-            readFile()
-            printAdjacencyMatrix()
-            getPathAStar()
-            break
-        if (key == KEY3):
-            LCDPrintf("DRIVE\n")
-            # previousNode = path[0]
-            # for node in path:
-            #    driveToPoint(nade.x, node.y)
-            #    LCDLine(2*int(128 node.x/2000), 256-2*int(128*node.y/2000), 2*int(128*previousNode.x/2000), 256-2*int(128*previousNode.y/2000))
-            #    previousNode = node
-            # LCDLine(2 * int(128*node.x/2000), 256-2*int(128 node.y/2000), 2*int(128*previousNode.x/2000), 256-2*int(128*previousNode.y/2000),...
-            break
-        if (key == KEY4):
-            endSim = True
-            break
+    KEYWait(KEY1)
+    LCDPrintf("Load File\n")
+    print("\n\n Loading File \n\n")
+    readFile()
+    printAdjacencyMatrix()
+
+    KEYWait(KEY2)
+    LCDPrintf("Find Shortest Path\n")
+    print("\n\n Find Shortest Path \n\n")
+    getPathAStar()
+
+    KEYWait(KEY3)
+    LCDPrintf("DRIVE\n")
+    # previousNode = path[0]
+    # for node in path:
+    #    driveToPoint(nade.x, node.y)
+    #    LCDLine(2*int(128 node.x/2000), 256-2*int(128*node.y/2000), 2*int(128*previousNode.x/2000), 256-2*int(128*previousNode.y/2000))
+    #    previousNode = node
+    # LCDLine(2 * int(128*node.x/2000), 256-2*int(128 node.y/2000), 2*int(128*previousNode.x/2000), 256-2*int(128*previousNode.y/2000),...
 
     KEYWait(KEY4)

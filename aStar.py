@@ -104,11 +104,10 @@ def readFile():
 
             id += 1
     for n in nodes:
-        print("Node ", n.id, " (", n.x, ",", n.x, ")")
+        print("Node ", n.id, " (", n.x, ",", n.y, ")")
 
 
 def getPathAStar():
-    print("calculate A*")
     inf = 99999999
     startNode = nodes[0]
     endNode = nodes[len(nodes)-1]
@@ -129,15 +128,9 @@ def getPathAStar():
 
     while len(openSet) != 0:
 
-        # for node in openSet:
-        #    print("openSet Node: ", node.id)
-        # print("gScores: ", gScores)
-        # print("fScores: ", fScores)
-
         # get node in openset with lowest f score
         sortedScores = sorted(fScores.items(), key=lambda x: x[1])
         currentNodeID = sortedScores[0][0]
-        # print("currentNodeID: ", currentNodeID)
 
         for node in nodes:
             if (node.id == currentNodeID):
@@ -185,7 +178,6 @@ def getPathAStar():
             if tentativeGScore < neighbourGScore:
                 # record parent
                 parent.update({neighbour: current})
-                # print("parent: {", neighbour.id, " : ", current.id, "}")
                 # record gScore and fScore using heuristic
                 neighbourGScore = tentativeGScore
                 gScores.update({neighbour.id: tentativeGScore})

@@ -118,7 +118,7 @@ def getPathAStar():
     inf = 99999999
     startNode = nodes[0]
     endNode = nodes[len(nodes)-1]
-    openSet = []  
+    openSet = []
     closedSet = []
     parent = {}
     gScores = {}
@@ -138,16 +138,27 @@ def getPathAStar():
         gScores.update({n.neighbour.id: n.distance})
         fScores.update({n.neighbour.id: n.distance+heuristic(n.neighbour)})
 
+    print("gScores: ", gScores)
+    print("fScores: ", fScores)
+
     # for i in range(len(nodes) - 2):
     #    gScores.update({nodes[i+1].id: inf})
     #    fScores.update({nodes[i+1].id: inf})
     # openSet.put((fScores[startNode.id], fScores[startNode.id], startNode.id))
 
+    fScores.update({4: 500})
+    print("fScores: ", fScores)
 
-'''
-    while not openSet.empty():
+    while len(openSet) != 0:
+
         # TODO get node in openset with lowest f score
+        sortedScores = sorted(fScores.items(), key=lambda x: x[1])
+        print(sortedScores)
+        print("first Node id: ", sortedScores.get()[0])
+
+        print("--------------------------------------------")
         current = nodes[openSet.get()[2]]
+        print(current)
 
         if current.id == endNode.id:  # at the goal
             # Retrieve path from parents and return
@@ -196,10 +207,10 @@ def getPathAStar():
                 if neighbour not in openSet.queue:
                     openSet.queue.append(neighbour.id)
 
+    print("No path found")
+    return []
+# '''
 
-print("No path found")
-return []
-'''
 
 # ************************** MAIN ******************************************
 if __name__ == "__main__":
@@ -219,8 +230,8 @@ if __name__ == "__main__":
     print("\n\n Find Shortest Path \n\n")
     getPathAStar()
 
-    KEYWait(KEY3)
-    LCDPrintf("DRIVE\n")
+    # KEYWait(KEY3)
+    # LCDPrintf("DRIVE\n")
     # previousNode = path[0]
     # for node in path:
     #    driveToPoint(nade.x, node.y)

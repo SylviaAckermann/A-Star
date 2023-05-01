@@ -118,7 +118,7 @@ def getPathAStar():
     inf = 99999999
     startNode = nodes[0]
     endNode = nodes[len(nodes)-1]
-    openSet = []  # ive seen examples of people using a priority queue
+    openSet = []  
     closedSet = []
     parent = {}
     gScores = {}
@@ -135,8 +135,8 @@ def getPathAStar():
         print("Neighbor ", n.neighbour.id)
         print("Distance ", n.distance)
         openSet.append(n.neighbour.id)
-        gScores.append(n.neighbour.id, n.distance)
-        fScores.append(n.neighbour.id, n.distance+heuristic(n.neighbor))
+        gScores.update({n.neighbour.id: n.distance})
+        fScores.update({n.neighbour.id: n.distance+heuristic(n.neighbour)})
 
     # for i in range(len(nodes) - 2):
     #    gScores.update({nodes[i+1].id: inf})

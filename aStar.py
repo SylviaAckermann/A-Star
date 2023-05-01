@@ -132,11 +132,10 @@ def getPathAStar():
 
     currentNode = startNode
     for n in currentNode.neighbours:
-        print("Neighbor ", n.neighbour.id)
-        print("Distance ", n.distance)
-        openSet.append(n.neighbour.id)
+        openSet.append(n.neighbour)
         gScores.update({n.neighbour.id: n.distance})
         fScores.update({n.neighbour.id: n.distance+heuristic(n.neighbour)})
+    closedSet.append(startNode)
 
     print("gScores: ", gScores)
     print("fScores: ", fScores)
@@ -146,19 +145,16 @@ def getPathAStar():
     #    fScores.update({nodes[i+1].id: inf})
     # openSet.put((fScores[startNode.id], fScores[startNode.id], startNode.id))
 
-    fScores.update({4: 500})
-    print("fScores: ", fScores)
-
     while len(openSet) != 0:
 
         # TODO get node in openset with lowest f score
         sortedScores = sorted(fScores.items(), key=lambda x: x[1])
-        print(sortedScores)
-        print("first Node id: ", sortedScores.get()[0])
+        currentNodeID = sortedScores[0][0]
+        print("currentNodeID: ", currentNodeID)
 
-        print("--------------------------------------------")
-        current = nodes[openSet.get()[2]]
-        print(current)
+        for node in nodes:
+            if (node.id == currentNodeID):
+                current = node
 
         if current.id == endNode.id:  # at the goal
             # Retrieve path from parents and return
@@ -183,9 +179,10 @@ def getPathAStar():
             print("shortest path: ", [node.id for node in path])
             return path
 
-        openSet.put(fScores[current.id], gScores[current.id], current.id)
+        openSet.remove(current)
         closedSet.append(current)
 
+        neighbourGScore = inf
         for edge in current.neighbours:
             neighbour = edge.neighbour
 
@@ -193,19 +190,25 @@ def getPathAStar():
                 continue
 
             # TODO calculate from gScore and edge distance
-            tentativeGScore = heuristic(neighbour)
-
+            currentGScore = gScores.get(currentNodeID)
+            tentativeGScore = currentGScore + edge.distance
+# '''
             # tentative path is better than recorded path
-            if tentativeGScore < gScores[current.id]:
+            if tentativeGScore < neighbourGScore:
                 # TODO record parent
                 # TODO record gScore and fScore using heuristic
+                neighbourGScore = tentativeGScore
                 parent.update({current.id: neighbour.id})
-                gScores.update({current.id: tentativeGScore})
+                gScores.update({neighbour.id: tentativeGScore})
                 fScores.update(
-                    {current.id: fScores[current.id]+gScores[current.id]})
-
-                if neighbour not in openSet.queue:
-                    openSet.queue.append(neighbour.id)
+                    {neighbour.id: tentativeGScore+heuristic(neighbour)})
+                print("parents: ", parent)
+                print("gScores: ", gScores)
+                print("fScores: ", fScores)
+                print("--------------------------------------------")
+                if neighbour not in openSet:
+                    openSet.append(neighbour)
+                    # print("--------------------------------------------")
 
     print("No path found")
     return []

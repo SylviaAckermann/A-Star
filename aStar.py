@@ -5,7 +5,7 @@ from queue import PriorityQueue
 
 
 # global variables
-FILENAME = "nodes.txt"
+FILENAME = "branch.txt"
 
 
 class Node:
@@ -17,14 +17,6 @@ class Node:
 
     def addNeighbour(self, neighbour):
         self.neighbours.append(neighbour)
-
-
-# my_node = Node(100, 100)
-# node_2 = Node(200, 200)
-# my_node.addNeighbour(node_2)
-
-# for neighbour in my_node.neighbours:
-#    print(neighbour)
 
 
 class Edge:
@@ -111,6 +103,8 @@ def readFile():
                         int(128*neighbourNode.x/2000), 256-2*int(128*neighbourNode.y/2000), WHITE)
 
             id += 1
+    for n in nodes:
+        print("Node ", n.id, " (", n.x, ",", n.x, ")")
 
 
 def getPathAStar():
@@ -125,32 +119,25 @@ def getPathAStar():
     fScores = {}
 
     # initialise fScores, gScores and openSet
-    # This too my knowledge is correct
-    # gScores.update({startNode.id: 0})
-    # fScores.update({startNode.id: heuristic(startNode)})
-    # openSet.update(nodes[1, len(nodes)-1])
-
     currentNode = startNode
     for n in currentNode.neighbours:
         openSet.append(n.neighbour)
         gScores.update({n.neighbour.id: n.distance})
         fScores.update({n.neighbour.id: n.distance+heuristic(n.neighbour)})
+        parent.update({n.neighbour: currentNode})
     closedSet.append(startNode)
-
-    print("gScores: ", gScores)
-    print("fScores: ", fScores)
-
-    # for i in range(len(nodes) - 2):
-    #    gScores.update({nodes[i+1].id: inf})
-    #    fScores.update({nodes[i+1].id: inf})
-    # openSet.put((fScores[startNode.id], fScores[startNode.id], startNode.id))
 
     while len(openSet) != 0:
 
-        # TODO get node in openset with lowest f score
+        # for node in openSet:
+        #    print("openSet Node: ", node.id)
+        # print("gScores: ", gScores)
+        # print("fScores: ", fScores)
+
+        # get node in openset with lowest f score
         sortedScores = sorted(fScores.items(), key=lambda x: x[1])
         currentNodeID = sortedScores[0][0]
-        print("currentNodeID: ", currentNodeID)
+        # print("currentNodeID: ", currentNodeID)
 
         for node in nodes:
             if (node.id == currentNodeID):
@@ -161,16 +148,17 @@ def getPathAStar():
             currentNode = endNode
             path = []
             previousNode = endNode
-            totalDistance = 0
+            # totalDistance = 0
+
+            # Update total distance
+            totalDistance = gScores.get(currentNode.id)  # += ?
 
             while currentNode != startNode:
-                # TODO add to the path
-                # TODO Update total distance
-                # TODO Update the current and previous node
+                # add to the path
                 path.append(currentNode)
-                totalDistance += gScores[currentNode.id]
-                previousNode = currentNode
-                currentNode = parent[currentNode.id]
+                # Update the current and previous node
+                previousNode = parent.get(currentNode)
+                currentNode = previousNode
 
             path.append(currentNode)  # The last node
             path.reverse()  # Put it in the right order
@@ -189,26 +177,25 @@ def getPathAStar():
             if neighbour in closedSet:
                 continue
 
-            # TODO calculate from gScore and edge distance
+            # calculate from gScore and edge distance
             currentGScore = gScores.get(currentNodeID)
             tentativeGScore = currentGScore + edge.distance
 # '''
             # tentative path is better than recorded path
             if tentativeGScore < neighbourGScore:
-                # TODO record parent
-                # TODO record gScore and fScore using heuristic
+                # record parent
+                parent.update({neighbour: current})
+                # print("parent: {", neighbour.id, " : ", current.id, "}")
+                # record gScore and fScore using heuristic
                 neighbourGScore = tentativeGScore
-                parent.update({current.id: neighbour.id})
                 gScores.update({neighbour.id: tentativeGScore})
                 fScores.update(
                     {neighbour.id: tentativeGScore+heuristic(neighbour)})
-                print("parents: ", parent)
-                print("gScores: ", gScores)
-                print("fScores: ", fScores)
-                print("--------------------------------------------")
+
                 if neighbour not in openSet:
                     openSet.append(neighbour)
-                    # print("--------------------------------------------")
+        fScores.pop(current.id)
+        gScores.pop(current.id)
 
     print("No path found")
     return []

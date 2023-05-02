@@ -5,7 +5,7 @@ from queue import PriorityQueue
 
 
 # global variables
-FILENAME = "branch.txt"
+FILENAME = "cycle.txt"
 
 
 class Node:
@@ -210,15 +210,15 @@ if __name__ == "__main__":
     KEYWait(KEY2)
     LCDPrintf("Find Shortest Path\n")
     print("\n\n Find Shortest Path \n\n")
-    getPathAStar()
+    path = getPathAStar()
 
-    # KEYWait(KEY3)
-    # LCDPrintf("DRIVE\n")
-    # previousNode = path[0]
-    # for node in path:
-    #    driveToPoint(nade.x, node.y)
-    #    LCDLine(2*int(128 node.x/2000), 256-2*int(128*node.y/2000), 2*int(128*previousNode.x/2000), 256-2*int(128*previousNode.y/2000))
-    #    previousNode = node
-    # LCDLine(2 * int(128*node.x/2000), 256-2*int(128 node.y/2000), 2*int(128*previousNode.x/2000), 256-2*int(128*previousNode.y/2000),...
+    KEYWait(KEY3)
+    LCDPrintf("DRIVE\n")
+    for node in path:
+        LCDCircle(2*int(128*node.x/2000), 256-2 * int(128*node.y/2000), 7, BLUE, 1)
+    for node in path:
+        
+        driveToPoint(node.x, node.y)
+        LCDCircle(2*int(128*node.x/2000), 256-2 * int(128*node.y/2000), 7, RED, 1)
 
     KEYWait(KEY4)
